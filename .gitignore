@@ -3,5 +3,6 @@
 out/
 build/
 
-*.log
 *.swp
+access.log
+.DS_Store
