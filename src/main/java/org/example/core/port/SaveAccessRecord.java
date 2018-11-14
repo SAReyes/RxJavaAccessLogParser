@@ -1,9 +1,9 @@
 package org.example.core.port;
 
+import io.reactivex.Single;
 import org.example.domain.AccessRecord;
-import reactor.core.publisher.Mono;
 
 public interface SaveAccessRecord {
 
-    Mono<AccessRecord> saveAccessRecord(AccessRecord accessRecord);
+    Single<AccessRecord> saveAccessRecord(AccessRecord accessRecord);
 }

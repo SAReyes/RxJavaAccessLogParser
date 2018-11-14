@@ -1,11 +1,9 @@
 package org.example.core.port;
 
+import io.reactivex.Flowable;
 import org.example.domain.AccessRecord;
-import reactor.core.publisher.Flux;
-
-import java.io.File;
 
 public interface ReadNginxLog {
 
-    Flux<AccessRecord> readNginxLog(File file);
+    Flowable<AccessRecord> readNginxLog(String filename);
 }

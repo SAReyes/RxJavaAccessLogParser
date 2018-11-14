@@ -1,9 +1,9 @@
 package org.example.dataprovider.csv;
 
+import io.reactivex.Single;
 import org.example.domain.AccessRecord;
-import reactor.core.publisher.Mono;
 
 public interface ReadCsvLine {
 
-    Mono<AccessRecord> readCsvLine(String csvLine);
+    Single<AccessRecord> readCsvLine(String csvLine);
 }

@@ -1,13 +1,11 @@
 package org.example.dataprovider.csv;
 
-import org.apache.commons.io.FileUtils;
+import io.reactivex.Flowable;
+import io.reactivex.Single;
 import org.example.domain.AccessRecord;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,9 +19,8 @@ public class DefaultCsvDataProvider implements ReadCsvLine, ReadFileLines {
     }
 
     @Override
-    public Mono<AccessRecord> readCsvLine(String csvLine) {
-
-        return Mono.just(csvLine)
+    public Single<AccessRecord> readCsvLine(String csvLine) {
+        return Single.just(csvLine)
                 .map(it -> it.split("\\|"))
                 .map(it -> {
                     Date accessDate;
@@ -44,14 +41,12 @@ public class DefaultCsvDataProvider implements ReadCsvLine, ReadFileLines {
     }
 
     @Override
-    public Flux<String> readFileLines(File file) {
-        return Flux.fromStream(() -> {
-            try {
-                return FileUtils.readLines(file, Charset.defaultCharset()).stream();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+    public Flowable<String> readFileLines(String filename) {
+        return Flowable.using(
+                () -> new BufferedReader(new FileReader(filename)),
+                reader -> Flowable.fromIterable(() -> reader.lines().iterator()),
+                BufferedReader::close
+        );
     }
 
     private String trimWrappingQuotation(String input) {

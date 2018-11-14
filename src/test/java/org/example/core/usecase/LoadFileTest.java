@@ -1,5 +1,7 @@
 package org.example.core.usecase;
 
+import io.reactivex.Flowable;
+import io.reactivex.Single;
 import org.example.core.port.ReadNginxLog;
 import org.example.core.port.SaveAccessRecord;
 import org.example.domain.AccessRecord;
@@ -8,12 +10,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
-import java.io.File;
-import java.io.IOException;
 
 import static org.mockito.Mockito.doReturn;
 
@@ -34,8 +30,8 @@ public class LoadFileTest {
     }
 
     @Test
-    public void loads_a_file() throws IOException {
-        var file = File.createTempFile("nginx_log_test", ".log");
+    public void loads_a_file() {
+        var file = "/path/to/file";
         var records = new AccessRecord[] {
                 AccessRecord.builder().userAgent("first UA").build(),
                 AccessRecord.builder().userAgent("second UA").build()
@@ -45,15 +41,14 @@ public class LoadFileTest {
                 AccessRecord.builder().userAgent("second UA saved").build()
         };
 
-        doReturn(Flux.fromArray(records)).when(readNginxLog).readNginxLog(file);
-        doReturn(Mono.just(savedRecords[0])).when(saveAccessRecord).saveAccessRecord(records[0]);
-        doReturn(Mono.just(savedRecords[1])).when(saveAccessRecord).saveAccessRecord(records[1]);
+        doReturn(Flowable.fromArray(records)).when(readNginxLog).readNginxLog(file);
+        doReturn(Single.just(savedRecords[0])).when(saveAccessRecord).saveAccessRecord(records[0]);
+        doReturn(Single.just(savedRecords[1])).when(saveAccessRecord).saveAccessRecord(records[1]);
 
-        var result = sut.loadFile(file);
-
-        StepVerifier.create(result)
-                .expectNext(savedRecords[0])
-                .expectNext(savedRecords[1])
-                .verifyComplete();
+        sut.loadFile(file)
+                .test()
+                .assertComplete()
+                .assertValueCount(2)
+                .assertResult(savedRecords);
     }
 }

@@ -1,10 +1,8 @@
 package org.example.dataprovider.csv;
 
-import reactor.core.publisher.Flux;
-
-import java.io.File;
+import io.reactivex.Flowable;
 
 public interface ReadFileLines {
 
-    Flux<String> readFileLines(File file);
+    Flowable<String> readFileLines(String filename);
 }

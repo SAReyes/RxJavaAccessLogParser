@@ -3,10 +3,7 @@ package org.example.dataprovider.csv;
 import org.example.domain.AccessRecord;
 import org.junit.Before;
 import org.junit.Test;
-import reactor.test.StepVerifier;
 
-import java.io.File;
-import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -33,24 +30,22 @@ public class DefaultCsvDataProviderTest {
                 .userAgent("Fancy UA")
                 .build();
 
-        var result = sut.readCsvLine(csvLine);
-
-        StepVerifier
-                .create(result)
-                .expectNext(expected)
-                .verifyComplete();
+        sut.readCsvLine(csvLine)
+                .test()
+                .assertComplete()
+                .assertResult(expected);
     }
 
     @Test
-    public void reads_all_lines_from_a_file() throws URISyntaxException {
-        var file = new File(this.getClass().getResource("example.log").toURI());
+    public void reads_all_lines_from_a_file() {
+        var file = this.getClass().getResource("example.log").getPath();
 
-        var result = sut.readFileLines(file);
-
-        StepVerifier.create(result)
-                .expectNext("first line")
-                .expectNext("second line")
-                .verifyComplete();
+        sut.readFileLines(file)
+                .test()
+                .assertComplete()
+                .assertNoErrors()
+                .assertValueCount(2)
+                .assertResult("first line", "second line");
     }
 
     private Date formatDate(String date) throws ParseException {

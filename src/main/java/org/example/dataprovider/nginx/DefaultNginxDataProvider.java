@@ -1,12 +1,10 @@
 package org.example.dataprovider.nginx;
 
+import io.reactivex.Flowable;
 import org.example.core.port.ReadNginxLog;
 import org.example.dataprovider.csv.ReadFileLines;
 import org.example.domain.AccessRecord;
 import org.example.dataprovider.csv.ReadCsvLine;
-import reactor.core.publisher.Flux;
-
-import java.io.File;
 
 public class DefaultNginxDataProvider implements ReadNginxLog {
 
@@ -19,8 +17,8 @@ public class DefaultNginxDataProvider implements ReadNginxLog {
     }
 
     @Override
-    public Flux<AccessRecord> readNginxLog(File file) {
-        return readFileLines.readFileLines(file)
-                .flatMap(it -> readCsvLine.readCsvLine(it));
+    public Flowable<AccessRecord> readNginxLog(String filename) {
+        return readFileLines.readFileLines(filename)
+                .flatMapSingle(it -> readCsvLine.readCsvLine(it));
     }
 }

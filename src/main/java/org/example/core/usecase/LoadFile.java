@@ -1,11 +1,9 @@
 package org.example.core.usecase;
 
+import io.reactivex.Flowable;
 import org.example.domain.AccessRecord;
-import reactor.core.publisher.Flux;
-
-import java.io.File;
 
 public interface LoadFile {
 
-    Flux<AccessRecord> loadFile(File file);
+    Flowable<AccessRecord> loadFile(String filename);
 }

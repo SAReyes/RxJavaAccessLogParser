@@ -1,5 +1,7 @@
 package org.example.dataprovider.nginx;
 
+import io.reactivex.Flowable;
+import io.reactivex.Single;
 import org.example.dataprovider.csv.ReadFileLines;
 import org.example.domain.AccessRecord;
 import org.example.dataprovider.csv.ReadCsvLine;
@@ -8,12 +10,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-
-import java.io.File;
-import java.io.IOException;
 
 import static org.mockito.Mockito.doReturn;
 
@@ -34,8 +30,8 @@ public class DefaultNginxDataProviderTest {
     }
 
     @Test
-    public void reads_a_log_properly() throws IOException {
-        var aFile = File.createTempFile("nginx_log_test", ".log");
+    public void reads_a_log_properly() {
+        var file = "/path/to/file";
         var stringEntries = new String[]{
                 "First access",
                 "Second access"
@@ -45,15 +41,14 @@ public class DefaultNginxDataProviderTest {
                 AccessRecord.builder().userAgent("Second UA").build()
         };
 
-        doReturn(Flux.fromArray(stringEntries)).when(readFileLines).readFileLines(aFile);
-        doReturn(Mono.just(accessRecords[0])).when(readCsvLine).readCsvLine(stringEntries[0]);
-        doReturn(Mono.just(accessRecords[1])).when(readCsvLine).readCsvLine(stringEntries[1]);
+        doReturn(Flowable.fromArray(stringEntries)).when(readFileLines).readFileLines(file);
+        doReturn(Single.just(accessRecords[0])).when(readCsvLine).readCsvLine(stringEntries[0]);
+        doReturn(Single.just(accessRecords[1])).when(readCsvLine).readCsvLine(stringEntries[1]);
 
-        var result = sut.readNginxLog(aFile);
-
-        StepVerifier.create(result)
-                .expectNext(accessRecords[0])
-                .expectNext(accessRecords[1])
-                .verifyComplete();
+        sut.readNginxLog(file)
+                .test()
+                .assertComplete()
+                .assertValueCount(2)
+                .assertResult(accessRecords);
     }
 }

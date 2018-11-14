@@ -1,11 +1,9 @@
 package org.example.core.usecase;
 
+import io.reactivex.Flowable;
 import org.example.core.port.ReadNginxLog;
 import org.example.core.port.SaveAccessRecord;
 import org.example.domain.AccessRecord;
-import reactor.core.publisher.Flux;
-
-import java.io.File;
 
 public class LoadFileImpl implements LoadFile {
 
@@ -18,8 +16,8 @@ public class LoadFileImpl implements LoadFile {
     }
 
     @Override
-    public Flux<AccessRecord> loadFile(File file) {
-        return readNginxLog.readNginxLog(file)
-                .flatMap(saveAccessRecord::saveAccessRecord);
+    public Flowable<AccessRecord> loadFile(String filename) {
+        return readNginxLog.readNginxLog(filename)
+                .flatMapSingle(saveAccessRecord::saveAccessRecord);
     }
 }
