@@ -1,5 +1,6 @@
 package org.example.dataprovider.nginx;
 
+import org.example.core.port.ReadNginxLog;
 import org.example.dataprovider.csv.ReadFileLines;
 import org.example.domain.AccessRecord;
 import org.example.dataprovider.csv.ReadCsvLine;

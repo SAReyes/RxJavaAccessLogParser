@@ -1,4 +1,4 @@
-package org.example.dataprovider.nginx;
+package org.example.core.port;
 
 import org.example.domain.AccessRecord;
 import reactor.core.publisher.Flux;
