@@ -3,7 +3,7 @@ package org.example.core.port;
 import io.reactivex.Flowable;
 import org.example.domain.AccessRecord;
 
-public interface ReadNginxLog {
+public interface ReadAccessLog {
 
-    Flowable<AccessRecord> readNginxLog(String filename);
+    Flowable<AccessRecord> readAccessLog(String filename);
 }

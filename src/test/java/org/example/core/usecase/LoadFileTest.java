@@ -1,8 +1,7 @@
 package org.example.core.usecase;
 
 import io.reactivex.Flowable;
-import io.reactivex.Single;
-import org.example.core.port.ReadNginxLog;
+import org.example.core.port.ReadAccessLog;
 import org.example.core.port.SaveAccessRecord;
 import org.example.domain.AccessRecord;
 import org.junit.Before;
@@ -19,14 +18,14 @@ public class LoadFileTest {
     private LoadFile sut;
 
     @Mock
-    private ReadNginxLog readNginxLog;
+    private ReadAccessLog readAccessLog;
 
     @Mock
     private SaveAccessRecord saveAccessRecord;
 
     @Before
     public void setUp() {
-        sut = new LoadFileImpl(readNginxLog, saveAccessRecord);
+        sut = new LoadFileImpl(readAccessLog, saveAccessRecord);
     }
 
     @Test
@@ -38,7 +37,7 @@ public class LoadFileTest {
         };
         var savedRecords = new Integer[]{1, 2};
 
-        doReturn(Flowable.fromArray(records)).when(readNginxLog).readNginxLog(file);
+        doReturn(Flowable.fromArray(records)).when(readAccessLog).readAccessLog(file);
         doReturn(Flowable.just(savedRecords[0])).when(saveAccessRecord).saveAccessRecord(records[0]);
         doReturn(Flowable.just(savedRecords[1])).when(saveAccessRecord).saveAccessRecord(records[1]);
 

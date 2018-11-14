@@ -1,4 +1,4 @@
-package org.example.dataprovider.nginx;
+package org.example.dataprovider.accessLog;
 
 import io.reactivex.Flowable;
 import io.reactivex.Single;
@@ -14,9 +14,9 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static org.mockito.Mockito.doReturn;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultNginxDataProviderTest {
+public class DefaultAccessLogDataProviderTest {
 
-    private DefaultNginxDataProvider sut;
+    private DefaultAccessLogDataProvider sut;
 
     @Mock
     private ReadCsvLine readCsvLine;
@@ -26,7 +26,7 @@ public class DefaultNginxDataProviderTest {
 
     @Before
     public void setUp() {
-        sut = new DefaultNginxDataProvider(readCsvLine, readFileLines);
+        sut = new DefaultAccessLogDataProvider(readCsvLine, readFileLines);
     }
 
     @Test
@@ -45,7 +45,7 @@ public class DefaultNginxDataProviderTest {
         doReturn(Single.just(accessRecords[0])).when(readCsvLine).readCsvLine(stringEntries[0]);
         doReturn(Single.just(accessRecords[1])).when(readCsvLine).readCsvLine(stringEntries[1]);
 
-        sut.readNginxLog(file)
+        sut.readAccessLog(file)
                 .test()
                 .assertComplete()
                 .assertValueCount(2)
