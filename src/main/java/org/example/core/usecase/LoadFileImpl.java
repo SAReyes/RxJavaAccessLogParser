@@ -3,7 +3,6 @@ package org.example.core.usecase;
 import io.reactivex.Flowable;
 import org.example.core.port.ReadNginxLog;
 import org.example.core.port.SaveAccessRecord;
-import org.example.domain.AccessRecord;
 
 public class LoadFileImpl implements LoadFile {
 
@@ -16,8 +15,8 @@ public class LoadFileImpl implements LoadFile {
     }
 
     @Override
-    public Flowable<AccessRecord> loadFile(String filename) {
+    public Flowable<Integer> loadFile(String filename) {
         return readNginxLog.readNginxLog(filename)
-                .flatMapSingle(saveAccessRecord::saveAccessRecord);
+                .flatMap(saveAccessRecord::saveAccessRecord);
     }
 }

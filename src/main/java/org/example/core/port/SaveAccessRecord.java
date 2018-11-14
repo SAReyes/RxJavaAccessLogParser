@@ -1,9 +1,9 @@
 package org.example.core.port;
 
-import io.reactivex.Single;
+import io.reactivex.Flowable;
 import org.example.domain.AccessRecord;
 
 public interface SaveAccessRecord {
 
-    Single<AccessRecord> saveAccessRecord(AccessRecord accessRecord);
+    Flowable<Integer> saveAccessRecord(AccessRecord accessRecord);
 }

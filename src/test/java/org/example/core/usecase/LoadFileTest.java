@@ -32,18 +32,15 @@ public class LoadFileTest {
     @Test
     public void loads_a_file() {
         var file = "/path/to/file";
-        var records = new AccessRecord[] {
+        var records = new AccessRecord[]{
                 AccessRecord.builder().userAgent("first UA").build(),
                 AccessRecord.builder().userAgent("second UA").build()
         };
-        var savedRecords = new AccessRecord[] {
-                AccessRecord.builder().userAgent("first UA saved").build(),
-                AccessRecord.builder().userAgent("second UA saved").build()
-        };
+        var savedRecords = new Integer[]{1, 2};
 
         doReturn(Flowable.fromArray(records)).when(readNginxLog).readNginxLog(file);
-        doReturn(Single.just(savedRecords[0])).when(saveAccessRecord).saveAccessRecord(records[0]);
-        doReturn(Single.just(savedRecords[1])).when(saveAccessRecord).saveAccessRecord(records[1]);
+        doReturn(Flowable.just(savedRecords[0])).when(saveAccessRecord).saveAccessRecord(records[0]);
+        doReturn(Flowable.just(savedRecords[1])).when(saveAccessRecord).saveAccessRecord(records[1]);
 
         sut.loadFile(file)
                 .test()
