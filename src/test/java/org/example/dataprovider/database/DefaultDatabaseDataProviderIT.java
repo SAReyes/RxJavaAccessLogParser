@@ -3,11 +3,17 @@ package org.example.dataprovider.database;
 import org.davidmoten.rx.jdbc.ConnectionProvider;
 import org.davidmoten.rx.jdbc.Database;
 import org.davidmoten.rx.jdbc.pool.Pools;
+import org.example.core.usecase.LoadFileImpl;
+import org.example.dataprovider.accessLog.DefaultAccessLogDataProvider;
+import org.example.dataprovider.csv.DefaultCsvDataProvider;
 import org.example.domain.AccessRecord;
+import org.example.domain.Duration;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class DefaultDatabaseDataProviderIT {
@@ -54,5 +60,34 @@ public class DefaultDatabaseDataProviderIT {
                 .await()
                 .assertComplete()
                 .assertResult(1);
+    }
+
+    @Test
+    @Ignore
+    public void load_full_log() {
+        var file = this.getClass().getResource("access.log").getPath();
+        var csvProvider = new DefaultCsvDataProvider(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"));
+        var readAccessLog = new DefaultAccessLogDataProvider(csvProvider, csvProvider);
+        var loadFile = new LoadFileImpl(readAccessLog, sut);
+
+        var result = loadFile.loadFile(file)
+                .subscribe(System.out::println);
+
+        while (!result.isDisposed()) {
+        }
+    }
+
+    @Test
+    @Ignore
+    public void find_blocked_ips() throws ParseException, InterruptedException {
+        sut
+                .findIpsByDateDurationAndThreshold(
+                        new SimpleDateFormat("yyyy-MM-dd.HH:mm:ss").parse("2017-01-01.15:00:00"),
+                        Duration.HOURLY,
+                        200
+                )
+                .test()
+                .await()
+                .assertResult("192.168.106.134", "192.168.11.231");
     }
 }
