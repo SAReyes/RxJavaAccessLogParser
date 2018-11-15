@@ -3,6 +3,7 @@ package org.example.dataprovider.database;
 import org.davidmoten.rx.jdbc.ConnectionProvider;
 import org.davidmoten.rx.jdbc.Database;
 import org.davidmoten.rx.jdbc.pool.Pools;
+import org.davidmoten.rx.jdbc.tuple.Tuple2;
 import org.example.core.usecase.LoadFileImpl;
 import org.example.dataprovider.accessLog.DefaultAccessLogDataProvider;
 import org.example.dataprovider.csv.DefaultCsvDataProvider;
@@ -88,6 +89,18 @@ public class DefaultDatabaseDataProviderIT {
                 )
                 .test()
                 .await()
-                .assertResult("192.168.106.134", "192.168.11.231");
+                .assertResult(
+                        Tuple2.create("192.168.106.134", 232),
+                        Tuple2.create("192.168.11.231", 211)
+                );
+    }
+
+    @Test
+    @Ignore
+    public void inserts_blocked_ip() throws InterruptedException {
+        sut.processBannedIp("192.168.1.1", "The gateway is banned")
+                .test()
+                .await()
+                .assertComplete();
     }
 }
