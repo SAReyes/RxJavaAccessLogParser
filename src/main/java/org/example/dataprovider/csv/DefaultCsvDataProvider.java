@@ -6,6 +6,8 @@ import org.example.domain.AccessRecord;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,9 +43,9 @@ public class DefaultCsvDataProvider implements ReadCsvLine, ReadFileLines {
     }
 
     @Override
-    public Flowable<String> readFileLines(String filename) {
+    public Flowable<String> readFileLines(InputStream inputStream) {
         return Flowable.using(
-                () -> new BufferedReader(new FileReader(filename)),
+                () -> new BufferedReader(new InputStreamReader(inputStream)),
                 reader -> Flowable.fromIterable(() -> reader.lines().iterator()),
                 BufferedReader::close
         );

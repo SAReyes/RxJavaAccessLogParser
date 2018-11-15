@@ -3,6 +3,7 @@ package org.example.dataprovider.database;
 import io.reactivex.Flowable;
 import org.davidmoten.rx.jdbc.Database;
 import org.davidmoten.rx.jdbc.tuple.Tuple2;
+import org.example.core.port.CountAccessRecords;
 import org.example.core.port.CreateSchema;
 import org.example.core.port.FindIpsBy;
 import org.example.core.port.ProcessBannedIp;
@@ -13,7 +14,8 @@ import org.example.domain.Duration;
 import java.util.Calendar;
 import java.util.Date;
 
-public class DefaultDatabaseDataProvider implements SaveAccessRecord, CreateSchema, FindIpsBy, ProcessBannedIp {
+public class DefaultDatabaseDataProvider implements SaveAccessRecord, CreateSchema, FindIpsBy, ProcessBannedIp,
+        CountAccessRecords {
 
     private Database db;
 
@@ -45,14 +47,15 @@ public class DefaultDatabaseDataProvider implements SaveAccessRecord, CreateSche
                 "    request varchar(255)," +
                 "    status int," +
                 "    user_agent varchar(255)," +
-                "    PRIMARY KEY (access_id)\n" +
-                ");\n")
+                "    PRIMARY KEY (access_id)" +
+                ");")
                 .counts();
 
         var bansCounts = db.update("CREATE TABLE IF NOT EXISTS BANNED_IP (" +
                 "   banned_id int NOT NULL AUTO_INCREMENT," +
                 "   ip varchar(255)," +
                 "   comment text," +
+                "   created_date DATETIME," +
                 "   PRIMARY KEY (banned_id)" +
                 ")")
                 .counts();
@@ -73,10 +76,17 @@ public class DefaultDatabaseDataProvider implements SaveAccessRecord, CreateSche
     @Override
     public Flowable<String> processBannedIp(String ip, String message) {
         return db
-                .update("INSERT INTO BANNED_IP(ip,comment) values(?,?)")
-                .parameters(ip, message)
+                .update("INSERT INTO BANNED_IP(ip,comment,created_date) values(?,?,?)")
+                .parameters(ip, message, new Date())
                 .counts()
                 .map(it -> ip);
+    }
+
+    @Override
+    public Flowable<Integer> countAccessLog() {
+        return db
+                .select("select count(*) from ACCESS_LOG")
+                .getAs(Integer.class);
     }
 
     private Date getEndDate(Date startDate, Duration duration) {
@@ -87,5 +97,4 @@ public class DefaultDatabaseDataProvider implements SaveAccessRecord, CreateSche
 
         return cal.getTime();
     }
-
 }

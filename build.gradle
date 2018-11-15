@@ -11,7 +11,20 @@ repositories {
     mavenCentral()
 }
 
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.example.Entrypoint'
+    }
+
+    // This line of code recursively collects and copies all of a project's files
+    // and adds them to the JAR itself. One can extend this task, to skip certain
+    // files or particular types at will
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+
 dependencies {
+    compile group: 'io.airlift', name: 'airline', version: '0.8'
     compile group: 'org.projectlombok', name: 'lombok', version: '1.18.4'
     compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.3'
     compile group: 'com.github.davidmoten', name: 'rxjava2-jdbc', version: '0.1-RC42'

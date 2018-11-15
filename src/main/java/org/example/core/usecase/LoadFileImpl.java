@@ -4,6 +4,8 @@ import io.reactivex.Flowable;
 import org.example.core.port.ReadAccessLog;
 import org.example.core.port.SaveAccessRecord;
 
+import java.io.InputStream;
+
 public class LoadFileImpl implements LoadFile {
 
     private ReadAccessLog readAccessLog;
@@ -15,8 +17,8 @@ public class LoadFileImpl implements LoadFile {
     }
 
     @Override
-    public Flowable<Integer> loadFile(String filename) {
-        return readAccessLog.readAccessLog(filename)
+    public Flowable<Integer> loadFile(InputStream inputStream) {
+        return readAccessLog.readAccessLog(inputStream)
                 .flatMap(saveAccessRecord::saveAccessRecord);
     }
 }

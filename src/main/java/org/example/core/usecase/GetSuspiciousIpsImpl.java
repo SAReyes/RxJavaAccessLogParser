@@ -7,7 +7,6 @@ import org.example.core.port.ProcessBannedIp;
 import org.example.domain.Duration;
 
 import java.util.Date;
-import java.util.List;
 
 public class GetSuspiciousIpsImpl implements GetSuspiciousIps {
 

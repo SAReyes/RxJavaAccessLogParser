@@ -66,7 +66,7 @@ public class DefaultDatabaseDataProviderIT {
     @Test
     @Ignore
     public void load_full_log() {
-        var file = this.getClass().getResource("access.log").getPath();
+        var file = this.getClass().getResource("org/example/access.log").getPath();
         var csvProvider = new DefaultCsvDataProvider(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"));
         var readAccessLog = new DefaultAccessLogDataProvider(csvProvider, csvProvider);
         var loadFile = new LoadFileImpl(readAccessLog, sut);
