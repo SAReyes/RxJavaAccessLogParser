@@ -30,7 +30,7 @@ public class LoadFileTest {
 
     @Test
     public void loads_a_file() {
-        var file = "/path/to/file";
+        var file = this.getClass().getResourceAsStream("/touch.log");
         var records = new AccessRecord[]{
                 AccessRecord.builder().userAgent("first UA").build(),
                 AccessRecord.builder().userAgent("second UA").build()

@@ -38,7 +38,7 @@ public class DefaultCsvDataProviderTest {
 
     @Test
     public void reads_all_lines_from_a_file() {
-        var file = this.getClass().getResource("example.log").getPath();
+        var file = this.getClass().getResourceAsStream("example.log");
 
         sut.readFileLines(file)
                 .test()
