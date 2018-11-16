@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/SAReyes/RxJavaAccessLogParser.svg?token=xjkTRQSfykksXGTTzRbm&branch=master)](https://travis-ci.com/SAReyes/RxJavaAccessLogParser)
+
 A small example using RxJava2 and my approach of CleanArchitecture
 
 # Access Parser
